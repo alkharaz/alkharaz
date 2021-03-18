@@ -1,0 +1,43 @@
+from django.contrib import admin
+from .models import DashboardModel
+from QueApp.models import QuestionsModel, AnswersModel, UsersAnswerModel
+from django.db import models
+
+# Register your models here.
+
+class DashboardAdmin(admin.ModelAdmin):
+    class Meta:
+        model = QuestionsModel
+    change_list_template = 'admin/Dashboard_change_list.html'
+    date_hierarchy = 'created'
+
+    def has_add_permission(self, request):
+        return False
+
+    def changelist_view(self, request, extra_context=None):
+        response = super().changelist_view(
+            request,
+            extra_context=extra_context,
+        )
+        try:
+            qs = response.context_data['cl'].queryset
+        except (AttributeError, KeyError):
+            return response
+
+        userAnswersTx  = AnswerModel.objects.annotate(TotalAnswer = models.Count('Answer'))
+
+        metrics = {
+            'totalAnswers' : models.Count('Answers'),
+	    'usersAnswer': userAnswersTx,
+        }
+
+        response.context_data['summary'] = list(
+            qs
+            .values('Question')
+	    .annotate(**metrics)
+            .order_by('-usersAnswer')
+        )
+
+        return response
+
+admin.site.register(DashboardModel, DashboardAdmin)

@@ -1,0 +1,117 @@
+{% extends "admin/change_list.html" %}
+{% block content_title %}
+    <h1> Questions Statistic </h1>
+{% endblock %}
+{% block result_list %}
+{{ answers|json_script:"thedata" }}
+{{ summary|json_script:"thesummry" }}
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+
+      // Load the Visualization API and the piechart package.
+      google.charts.load('current', {'packages':['corechart']});
+
+      // Set a callback to run when the Google Visualization API is loaded.
+      
+      google.charts.setOnLoadCallback(drawChart);
+      // Callback that creates and populates a data table, 
+      // instantiates the pie chart, passes in the data and
+      // draws it.
+      
+      function drawChart(theid) {
+        
+        const AnswersData = JSON.parse(document.getElementById('thedata').textContent);
+        const QuestionData = JSON.parse(document.getElementById('thesummry').textContent);
+
+        data = [];
+        newArray = [];
+          for (var q = 0; q < QuestionData.length; q++ ) {
+            qID = QuestionData[q].id;
+            newArray = [];
+            for (var an = 0; an < AnswersData.length; an++) {
+
+              if ( AnswersData[an].Question == qID ) {
+                newArray.push([AnswersData[an].Answer,AnswersData[an].UsersAnswer]);
+              }
+            }
+            data[q] = new google.visualization.DataTable();
+            data[q].addColumn('string', 'AnswerTitle');
+            data[q].addColumn('number', 'UsersAnswers');
+            data[q].addRows(newArray);
+            console.log(newArray);
+            var options = {'title':'hello','width':500,'height':200,is3D: true,};
+            var chart = new google.visualization.PieChart(document.getElementById('Question'+qID));
+            chart.draw(data[q], options);      
+          }
+      }
+    </script>
+
+<div class="results">
+    <table>
+        
+    <thead>
+      <tr>
+        <th>
+          <div class="text">
+            <a href="#">ID</a>
+          </div>
+        </th>
+        <th>
+          <div class="text">
+            <a href="#">Question</a>
+          </div>
+        </th>
+        <th>
+          <div class="text">
+            <a href="#">Answers</a>
+          </div>
+        </th>
+        <th>
+          <div class="text">
+            <a href="#">Total User Answers</a>
+          </div>
+        </th>
+        <th>
+          <div class="text">
+            <a href="#">Chart</a>
+          </div>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+{% for result in summary %}
+<tr>
+    <td> {{ result.id }} </td>
+    <td> {{ result.Question }} </td>
+    <td> {{ result.totalAnswers }} </td>
+    <td> {{ result.totalUsersAnswer }} </td>
+    <td></td>
+</tr>
+<tr>
+  <td colspan="5" id='Question{{ result.id }}' style="width:300; height:200"></td>
+</tr>
+ <!--  {% for answer in answers %}
+    <tr> 
+      <td colspan="5"> {%ifequal answer.Question.id result.id %} </td>
+      {{ answer.id }}
+      {{ answer.Answer }}
+      {{ answer.UsersAnswer.count }}
+      <td>
+        <strong> {% widthratio answer.UsersAnswer.count result.totalUsersAnswer 100 %}% </strong>
+      </td> 
+      {% endifequal %}
+      
+    </tr>
+  {% endfor %}-->
+  <tr>
+    <!-- <div id='Question{{ result.id }}' style="width:300; height:200"></div> -->
+    <div id='Chart1' style="width:300; height:200"></div>
+    <td colspan="5" bgcolor="#fff">&nbsp;</td>
+  </tr>
+
+{% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
+{% block pagination %}{% endblock %}
