@@ -1,10 +1,5 @@
-- 👋 Hi, I’m @alkharaz
-- 👀 I’m interested in ...
-- 🌱 I’m currently learning ...
-- 💞️ I’m looking to collaborate on ...
-- 📫 How to reach me ...
-
-<!---
-alkharaz/alkharaz is a ✨ special ✨ repository because its `README.md` (this file) appears on your GitHub profile.
-You can click the Preview link to take a look at your changes.
---->
+- 👋 Hi, I’m Abdulwahab alkharaz
+- 👀 I’m interested in Programing (Swift/Python)
+- 🌱 I’m currently learning Django Framework
+- 💞️ I’m looking to collaborate on ..
+- 📫 How to reach me Twitter: @bosoud2 Instagram: @bosoud
